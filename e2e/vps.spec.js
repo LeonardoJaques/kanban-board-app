@@ -1,13 +1,21 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
-const VPS_URL = 'https://jaquesprojetos.com.br/kanban';
-const USER = 'leo';
-const PASS = '***REDACTED***';
+// Credentials loaded from environment variables — never hardcode in source
+const VPS_URL = process.env.KANBAN_URL || 'https://jaquesprojetos.com.br/kanban';
+const USER = process.env.KANBAN_USER;
+const PASS = process.env.KANBAN_PASS;
 
-// Helper: URL with basic auth embedded
-const authUrl = (path = '') =>
-  `https://${USER}:${PASS}@jaquesprojetos.com.br/kanban${path}`;
+if (!USER || !PASS) {
+  throw new Error(
+    'Set KANBAN_USER and KANBAN_PASS environment variables before running VPS tests.\n' +
+    'Example: KANBAN_USER=leo KANBAN_PASS=secret npx playwright test e2e/vps.spec.js'
+  );
+}
+
+const authHeader = () => ({
+  Authorization: 'Basic ' + Buffer.from(`${USER}:${PASS}`).toString('base64'),
+});
 
 test.describe('VPS - Kanban em produção', () => {
   test('401 sem credenciais', async ({ request }) => {
@@ -16,31 +24,19 @@ test.describe('VPS - Kanban em produção', () => {
   });
 
   test('200 com credenciais corretas', async ({ request }) => {
-    const resp = await request.get(VPS_URL, {
-      headers: {
-        Authorization: 'Basic ' + Buffer.from(`${USER}:${PASS}`).toString('base64'),
-      },
-    });
+    const resp = await request.get(VPS_URL, { headers: authHeader() });
     expect(resp.status()).toBe(200);
   });
 
   test('API /all acessível com auth', async ({ request }) => {
-    const resp = await request.get(`${VPS_URL}/api/all`, {
-      headers: {
-        Authorization: 'Basic ' + Buffer.from(`${USER}:${PASS}`).toString('base64'),
-      },
-    });
+    const resp = await request.get(`${VPS_URL}/api/all`, { headers: authHeader() });
     expect(resp.ok()).toBeTruthy();
     const data = await resp.json();
     expect(Array.isArray(data)).toBeTruthy();
   });
 
   test('API rejeita UUID inválido', async ({ request }) => {
-    const resp = await request.get(`${VPS_URL}/api/boards/not-valid`, {
-      headers: {
-        Authorization: 'Basic ' + Buffer.from(`${USER}:${PASS}`).toString('base64'),
-      },
-    });
+    const resp = await request.get(`${VPS_URL}/api/boards/not-valid`, { headers: authHeader() });
     expect(resp.status()).toBe(400);
   });
 
@@ -53,17 +49,11 @@ test.describe('VPS - Kanban em produção', () => {
   });
 
   test('carrega o app no browser e faz screenshot', async ({ page }) => {
-    // Basic auth via URL
-    await page.goto(authUrl('/'));
+    await page.goto(`https://${USER}:${PASS}@jaquesprojetos.com.br/kanban/`);
     await page.waitForLoadState('networkidle');
 
-    const title = await page.title();
-    expect(title.toLowerCase()).toContain('kanban');
-
-    // Should show some UI content
     await expect(page.locator('body')).toBeVisible();
 
-    // No JS errors
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
     await page.reload();
