@@ -23,7 +23,7 @@
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/pickers": "^3.2.10",
-    "@types/dompurify": "2.2.0",
+    "@types/dompurify": "^3.0.5",
     "@types/jest": "26.0.19",
     "@types/js-yaml": "^4.0.0",
     "@types/marked": "^1.2.1",
@@ -38,7 +38,7 @@
     "codemirror": "^5.59.1",
     "connected-react-router": "^6.8.0",
     "date-fns": "^2.16.1",
-    "dompurify": "^2.2.6",
+    "dompurify": "^3.3.3",
     "fruitsconfits": "^0.5.0",
     "js-yaml": "^4.0.0",
     "marked": "^1.2.7",
@@ -106,5 +106,8 @@
   "bugs": {
     "url": "https://github.com/shellyln/kanban-board-app/issues"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
 }

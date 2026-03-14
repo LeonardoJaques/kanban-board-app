@@ -35,3 +35,6 @@ yarn-error.log*
 
 # ESLint cache files
 .eslintcache
+
+# Server environment variables (contains DB credentials)
+server/.env
