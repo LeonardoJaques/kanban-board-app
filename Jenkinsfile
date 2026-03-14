@@ -5,12 +5,11 @@ pipeline {
         VPS_HOST = 'VPS_HOST'
         VPS_USER = 'leo'
         VPS_PASS = '***REDACTED***'
-        DOCKER_DIR = '/home/leo/docker'
+        DOCKER_DIR   = '/home/leo/docker'
+        BUILD_DIR    = '/home/leo/kanban-build'
         FRONTEND_DIR = '/home/leo/docker/kanban/frontend'
         BACKEND_DIR  = '/home/leo/docker/kanban/backend'
         APP_URL = 'https://jaquesprojetos.com.br/kanban'
-        REACT_APP_API_URL = 'https://jaquesprojetos.com.br/kanban/api'
-        PUBLIC_URL = '/kanban'
     }
 
     stages {
@@ -19,7 +18,6 @@ pipeline {
             steps {
                 echo '📦 Checkout do código...'
                 checkout scm
-                sh 'ls -la'
             }
         }
 
@@ -27,32 +25,14 @@ pipeline {
             steps {
                 echo '🔧 Verificando ferramentas necessárias...'
                 sh '''
-                    echo "=== sshpass ==="
-                    if command -v sshpass &> /dev/null; then
-                        echo "✅ sshpass: $(sshpass -V 2>&1)"
-                    else
-                        echo "❌ sshpass não encontrado! Instale: sudo apt-get install -y sshpass"
-                        exit 1
-                    fi
-
-                    echo "=== rsync ==="
-                    if command -v rsync &> /dev/null; then
-                        echo "✅ rsync: $(rsync --version | head -1)"
-                    else
-                        echo "❌ rsync não encontrado! Instale: sudo apt-get install -y rsync"
-                        exit 1
-                    fi
-
-                    echo "=== node ==="
-                    if command -v node &> /dev/null; then
-                        echo "✅ node: $(node -v)"
-                    else
-                        echo "❌ node não encontrado!"
-                        exit 1
-                    fi
-
-                    echo "=== npm ==="
-                    echo "✅ npm: $(npm -v)"
+                    for tool in sshpass rsync; do
+                        if command -v $tool &>/dev/null; then
+                            echo "✅ $tool encontrado"
+                        else
+                            echo "❌ $tool não encontrado!"
+                            exit 1
+                        fi
+                    done
                 '''
             }
         }
@@ -62,60 +42,75 @@ pipeline {
                 echo '🔌 Testando conexão com VPS...'
                 sh '''
                     sshpass -p "${VPS_PASS}" ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_HOST} \
-                        "echo 'Conexão SSH OK!' && hostname && docker ps --format '{{.Names}}' | sort"
+                        "echo 'Conexão OK' && node -v && npm -v"
                 '''
             }
         }
 
-        stage('Build Frontend') {
+        stage('Enviar Código para VPS') {
             steps {
-                echo '⚛️  Buildando React app...'
+                echo '📤 Sincronizando código-fonte para VPS...'
                 sh '''
-                    npm install --legacy-peer-deps
-                    REACT_APP_API_URL="${REACT_APP_API_URL}" PUBLIC_URL="${PUBLIC_URL}" npm run build
-                    echo "✅ Build concluído!"
-                    ls -lah build/
+                    # Envia o código-fonte (sem node_modules) para um dir temporário de build no VPS
+                    sshpass -p "${VPS_PASS}" ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_HOST} \
+                        "mkdir -p ${BUILD_DIR}"
+
+                    rsync -az --delete \
+                        --exclude="node_modules" \
+                        --exclude="build" \
+                        --exclude=".git" \
+                        -e "sshpass -p ${VPS_PASS} ssh -o StrictHostKeyChecking=no" \
+                        ./ \
+                        ${VPS_USER}@${VPS_HOST}:${BUILD_DIR}/
+
+                    echo "✅ Código enviado!"
+                '''
+            }
+        }
+
+        stage('Build Frontend no VPS') {
+            steps {
+                echo '⚛️  Buildando React no VPS...'
+                sh '''
+                    sshpass -p "${VPS_PASS}" ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_HOST} "
+                        cd ${BUILD_DIR}
+                        npm install --legacy-peer-deps
+                        REACT_APP_API_URL=https://jaquesprojetos.com.br/kanban/api \\
+                        PUBLIC_URL=/kanban \\
+                        npm run build
+                        echo '✅ Build concluído!'
+                        ls -lah build/
+                    "
                 '''
             }
         }
 
         stage('Deploy Frontend') {
             steps {
-                echo '🎨 Enviando frontend para VPS...'
+                echo '🎨 Publicando frontend...'
                 sh '''
-                    rsync -az --delete \
-                        -e "sshpass -p ${VPS_PASS} ssh -o StrictHostKeyChecking=no" \
-                        build/ \
-                        ${VPS_USER}@${VPS_HOST}:${FRONTEND_DIR}/
-                    echo "✅ Frontend sincronizado!"
+                    sshpass -p "${VPS_PASS}" ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_HOST} "
+                        rsync -az --delete ${BUILD_DIR}/build/ ${FRONTEND_DIR}/
+                        echo '✅ Frontend publicado!'
+                    "
                 '''
             }
         }
 
         stage('Deploy Backend') {
             steps {
-                echo '⚙️  Enviando backend para VPS...'
-                sh '''
-                    rsync -az --delete \
-                        --exclude="node_modules" \
-                        --exclude=".env" \
-                        --exclude=".env.docker" \
-                        -e "sshpass -p ${VPS_PASS} ssh -o StrictHostKeyChecking=no" \
-                        server/ \
-                        ${VPS_USER}@${VPS_HOST}:${BACKEND_DIR}/
-                    echo "✅ Backend sincronizado!"
-                '''
-            }
-        }
-
-        stage('Instalar Dependências no VPS') {
-            steps {
-                echo '📚 Instalando dependências no VPS...'
+                echo '⚙️  Publicando backend...'
                 sh '''
                     sshpass -p "${VPS_PASS}" ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_HOST} "
+                        rsync -az --delete \
+                            --exclude=node_modules \
+                            --exclude=.env \
+                            --exclude=.env.docker \
+                            ${BUILD_DIR}/server/ ${BACKEND_DIR}/
+
                         cd ${BACKEND_DIR}
                         npm install
-                        echo '✅ Dependências instaladas!'
+                        echo '✅ Backend publicado!'
                     "
                 '''
             }
@@ -140,33 +135,20 @@ pipeline {
                 echo '🏥 Verificando saúde da aplicação...'
                 sh '''
                     echo "Aguardando containers iniciarem..."
-                    sleep 15
+                    sleep 20
 
-                    echo "=== Logs do backend (últimas 10 linhas) ==="
+                    echo "=== Logs do backend ==="
                     sshpass -p "${VPS_PASS}" ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_HOST} \
-                        "docker logs kanban-backend --tail 10"
+                        "docker logs kanban-backend --tail 5"
 
                     echo ""
-                    echo "=== Testando frontend via HTTPS ==="
-                    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-                        -u "leo:***REDACTED***" "${APP_URL}")
-                    if [ "$HTTP_CODE" = "200" ]; then
-                        echo "✅ Frontend OK (HTTP $HTTP_CODE)"
-                    else
-                        echo "❌ Frontend retornou HTTP $HTTP_CODE"
-                        exit 1
-                    fi
+                    echo "=== Frontend ==="
+                    HTTP=$(curl -s -o /dev/null -w "%{http_code}" -u "leo:***REDACTED***" "${APP_URL}")
+                    [ "$HTTP" = "200" ] && echo "✅ Frontend OK (HTTP $HTTP)" || { echo "❌ Frontend HTTP $HTTP"; exit 1; }
 
-                    echo ""
-                    echo "=== Testando API via HTTPS ==="
-                    API_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-                        -u "leo:***REDACTED***" "${APP_URL}/api/all")
-                    if [ "$API_CODE" = "200" ]; then
-                        echo "✅ API OK (HTTP $API_CODE)"
-                    else
-                        echo "❌ API retornou HTTP $API_CODE"
-                        exit 1
-                    fi
+                    echo "=== API ==="
+                    API=$(curl -s -o /dev/null -w "%{http_code}" -u "leo:***REDACTED***" "${APP_URL}/api/all")
+                    [ "$API" = "200" ] && echo "✅ API OK (HTTP $API)" || { echo "❌ API HTTP $API"; exit 1; }
                 '''
             }
         }
@@ -175,8 +157,7 @@ pipeline {
     post {
         success {
             echo "✅ Deploy concluído com sucesso!"
-            echo "🌐 App: ${APP_URL}"
-            echo "🔑 Login: leo / ***REDACTED***"
+            echo "🌐 ${APP_URL}"
         }
         failure {
             echo '❌ Deploy falhou! Verifique os logs acima.'
