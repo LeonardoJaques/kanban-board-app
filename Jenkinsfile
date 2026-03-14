@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        VPS_HOST     = 'VPS_HOST'
+        VPS_HOST     = '191.252.178.228'
         DOCKER_DIR   = '/home/leo/docker'
         BUILD_DIR    = '/home/leo/kanban-build'
         FRONTEND_DIR = '/home/leo/docker/kanban/frontend'
