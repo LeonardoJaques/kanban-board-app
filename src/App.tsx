@@ -100,7 +100,7 @@ const App: React.FC<AppProps> = (props) => {
                         }
                     }
                 })
-                .catch(err => {
+                .catch((err: any) => {
                     console.log(err.message);
                 });
             }

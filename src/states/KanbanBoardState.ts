@@ -123,7 +123,7 @@ export async function getKanbanBoardReducer() {
                     boardNote: data.boards[0].boardNote,
                 };
                 db.post(board, {})
-                .then(v => {
+                .then((v: any) => {
                     const saved: KanbanBoardRecord = board as any;
                     saved._id = v.id;
                     saved._rev = v.rev;
@@ -140,7 +140,7 @@ export async function getKanbanBoardReducer() {
                 .catch(err => {
                     getConstructedAppStore().dispatch(kanbanBoardActions.failedAddBoard({
                         params: payload,
-                        error: err,
+                        error: err as any,
                     }));
                     setTimeout(() => {
                         getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
@@ -183,13 +183,13 @@ export async function getKanbanBoardReducer() {
                     } catch (e) {
                         getConstructedAppStore().dispatch(kanbanBoardActions.failedChangeActiveBoard({
                             params: payload,
-                            error: e,
+                            error: e as any,
                         }));
                         setTimeout(() => {
                             getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
                                 open: true,
                                 title: 'Error',
-                                message: 'Failed to change active board: ' + e.message,
+                                message: 'Failed to change active board: ' + (e as any).message,
                                 singleButton: true,
                                 colorIsSecondary: true,
                                 onClose: () => {
@@ -251,13 +251,13 @@ export async function getKanbanBoardReducer() {
                     } catch (e) {
                         getConstructedAppStore().dispatch(kanbanBoardActions.failedUpdateBoardName({
                             params: payload,
-                            error: e,
+                            error: e as any,
                         }));
                         setTimeout(() => {
                             getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
                                 open: true,
                                 title: 'Error',
-                                message: 'Failed to change board name: ' + e.message,
+                                message: 'Failed to change board name: ' + (e as any).message,
                                 singleButton: true,
                                 colorIsSecondary: true,
                                 onClose: () => getConstructedAppStore().dispatch(appEventsActions.closeAlertDialog()),
@@ -334,13 +334,13 @@ export async function getKanbanBoardReducer() {
                     } catch (e) {
                         getConstructedAppStore().dispatch(kanbanBoardActions.failedDeleteBoard({
                             params: payload,
-                            error: e,
+                            error: e as any,
                         }));
                         setTimeout(() => {
                             getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
                                 open: true,
                                 title: 'Error',
-                                message: 'Failed to delete board: ' + e.message,
+                                message: 'Failed to delete board: ' + (e as any).message,
                                 singleButton: true,
                                 colorIsSecondary: true,
                                 onClose: () => getConstructedAppStore().dispatch(appEventsActions.closeAlertDialog()),
@@ -379,7 +379,7 @@ export async function getKanbanBoardReducer() {
                 const activeBoard = Object.assign({}, state.activeBoard, { records });
 
                 db.post(change, {})
-                .then(v => {
+                .then((v: any) => {
                     change._id = v.id;
                     change._rev = v.rev;
                     getConstructedAppStore().dispatch(kanbanBoardActions.doneAddSticky({
@@ -390,7 +390,7 @@ export async function getKanbanBoardReducer() {
                 .catch(err => {
                     getConstructedAppStore().dispatch(kanbanBoardActions.failedAddSticky({
                         params: payload,
-                        error: err,
+                        error: err as any,
                     }));
                     setTimeout(() => {
                         getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
@@ -457,7 +457,7 @@ export async function getKanbanBoardReducer() {
                 .catch(err => {
                     getConstructedAppStore().dispatch(kanbanBoardActions.failedUpdateSticky({
                         params: payload,
-                        error: err,
+                        error: err as any,
                     }));
                     setTimeout(() => {
                         getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
@@ -510,7 +510,7 @@ export async function getKanbanBoardReducer() {
                 .catch(err => {
                     getConstructedAppStore().dispatch(kanbanBoardActions.failedUpdateStickyLanes({
                         params: payload,
-                        error: err,
+                        error: err as any,
                     }));
                     setTimeout(() => {
                         getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
@@ -562,7 +562,7 @@ export async function getKanbanBoardReducer() {
                 .catch(err => {
                     getConstructedAppStore().dispatch(kanbanBoardActions.failedArchiveSticky({
                         params: payload,
-                        error: err,
+                        error: err as any,
                     }));
                     setTimeout(() => {
                         getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
@@ -613,7 +613,7 @@ export async function getKanbanBoardReducer() {
                 .catch(err => {
                     getConstructedAppStore().dispatch(kanbanBoardActions.failedUnarchiveSticky({
                         params: payload,
-                        error: err,
+                        error: err as any,
                     }));
                     setTimeout(() => {
                         getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
@@ -651,7 +651,7 @@ export async function getKanbanBoardReducer() {
                 const activeBoard = Object.assign({}, state.activeBoard, { records });
 
                 db.remove(change, {})
-                .then(v => {
+                .then((v: any) => {
                     getConstructedAppStore().dispatch(kanbanBoardActions.doneDeleteSticky({
                         params: payload,
                         result: Object.assign({}, state, { activeBoard }),
@@ -660,7 +660,7 @@ export async function getKanbanBoardReducer() {
                 .catch(err => {
                     getConstructedAppStore().dispatch(kanbanBoardActions.failedDeleteSticky({
                         params: payload,
-                        error: err,
+                        error: err as any,
                     }));
                     setTimeout(() => {
                         getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
@@ -770,13 +770,13 @@ export async function getKanbanBoardReducer() {
                     } catch (e) {
                         getConstructedAppStore().dispatch(kanbanBoardActions.failedEditBoardAndStickys({
                             params: payload,
-                            error: e,
+                            error: e as any,
                         }));
                         setTimeout(() => {
                             getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
                                 open: true,
                                 title: 'Error',
-                                message: 'Failed to save the board: ' + e.message,
+                                message: 'Failed to save the board: ' + (e as any).message,
                                 singleButton: true,
                                 colorIsSecondary: true,
                                 onClose: () => getConstructedAppStore().dispatch(appEventsActions.closeAlertDialog()),
@@ -815,7 +815,7 @@ export async function getKanbanBoardReducer() {
                     } catch (e) {
                         getConstructedAppStore().dispatch(kanbanBoardActions.failedRefreshActiveBoard({
                             params: payload,
-                            error: e,
+                            error: e as any,
                         }));
                     }
                 })();

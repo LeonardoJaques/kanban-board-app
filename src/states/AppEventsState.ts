@@ -109,7 +109,7 @@ export async function getAppEventsReducer() {
                 );
 
                 confDb.put(newConf, {})
-                .then(v => {
+                .then((v: any) => {
                     newConf._id = v.id;
                     newConf._rev = v.rev;
 
@@ -136,7 +136,7 @@ export async function getAppEventsReducer() {
                         .then(() => {
                             //
                         })
-                        .catch(err => {
+                        .catch((err: any) => {
                             getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
                                 open: true,
                                 title: 'Error',
@@ -148,7 +148,7 @@ export async function getAppEventsReducer() {
                         });
                     }
                 })
-                .catch(err => {
+                .catch((err: any) => {
                     getConstructedAppStore().dispatch(appEventsActions.failedUpdateAppConfig({
                         params: payload,
                         error: err,
@@ -157,7 +157,7 @@ export async function getAppEventsReducer() {
                         getConstructedAppStore().dispatch(appEventsActions.showAlertDialog({
                             open: true,
                             title: 'Error',
-                            message: 'Failed to update settings: ' + err.message,
+                            message: 'Failed to update settings: ' + (err as any).message,
                             singleButton: true,
                             colorIsSecondary: true,
                             onClose: () => getConstructedAppStore().dispatch(appEventsActions.closeAlertDialog()),
@@ -202,7 +202,7 @@ export async function getAppEventsReducer() {
                     } catch (e) {
                         alert(e);
                         getConstructedAppStore().dispatch(appEventsActions.failedResetApplication({
-                            error: e,
+                            error: e as any,
                         }));
                     }
                 })();
