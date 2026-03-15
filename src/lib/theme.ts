@@ -3,7 +3,6 @@
 // https://github.com/shellyln
 
 import { createMuiTheme } from '@material-ui/core/styles';
-import { blue, pink }     from '@material-ui/core/colors';
 
 
 
@@ -13,18 +12,18 @@ export const theme = createMuiTheme({
     palette: isDark ? {
         type: 'dark',
         primary: {
-            main: blue[500],
+            main: '#8b5cf6',
         },
         secondary: {
-            main: pink[500],
+            main: '#10b981',
         },
     } : {
         type: 'light',
         primary: {
-            main: blue[500],
+            main: '#7c3aed',
         },
         secondary: {
-            main: pink[500],
+            main: '#10b981',
         },
     },
 });

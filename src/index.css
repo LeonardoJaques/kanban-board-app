@@ -6,45 +6,63 @@
 
 @media (prefers-color-scheme: light) {
     :root {
-        --main-bg-color: #fff;
-        --main-text-color: #000;
-        --weak-text-color: #777;
-        --main-border-color: #000;
-        --weak-header-bg-color: #f8f8f8;
-        --weak-data-bg-color: #efefef;
-        --sticky-yellow-color: #fff5a3;
-        --sticky-green-color: #cfffcc;
-        --sticky-blue-color: #dbedff;
-        --sticky-red-color: #ffafaf;
-        --sticky-shadow-color: #888;
-        --sticky-tag-bg-color: #000;
+        --main-bg-color: #f4f4f5;
+        --surface-color: #ffffff;
+        --surface-hover: #f4f4f5;
+        --main-text-color: #18181b;
+        --weak-text-color: #71717a;
+        --main-border-color: #e4e4e7;
+        --weak-header-bg-color: #ffffff;
+        --weak-data-bg-color: #f4f4f5;
+        --accent-color: #7c3aed;
+        --accent-hover: #6d28d9;
+        --sticky-yellow-color: #ffffff;
+        --sticky-green-color: #ffffff;
+        --sticky-blue-color: #ffffff;
+        --sticky-red-color: #fef2f2;
+        --sticky-shadow-color: rgba(0,0,0,0.08);
+        --sticky-tag-bg-color: #7c3aed;
         --sticky-tag-text-color: #fff;
-        --calendar-sunday-color: #290e0e;
-        --calendar-saturday-color: #0a1520;
+        --stripe-backlog: #6b7280;
+        --stripe-todo: #3b82f6;
+        --stripe-inprogress: #f59e0b;
+        --stripe-staging: #8b5cf6;
+        --stripe-done: #10b981;
+        --calendar-sunday-color: #991b1b;
+        --calendar-saturday-color: #1e3a5f;
         --calendar-today-color: #fff;
-        --calendar-today-bg-color: #1e84eb;
+        --calendar-today-bg-color: #7c3aed;
     }
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --main-bg-color: #424242;
-        --main-text-color: #fff;
-        --weak-text-color: #777;
-        --main-border-color: #d3d3d3;
-        --weak-header-bg-color: #4a4a4a;
-        --weak-data-bg-color: #4f4f4f;
-        --sticky-yellow-color: #25220d;
-        --sticky-green-color: #0b1f0a;
-        --sticky-blue-color: #0a1520;
-        --sticky-red-color: #290e0e;
-        --sticky-shadow-color: #1f1f1f;
-        --sticky-tag-bg-color: #fff;
-        --sticky-tag-text-color: #000;
-        --calendar-sunday-color: #ffafaf;
-        --calendar-saturday-color: #dbedff;
+        --main-bg-color: #18181b;
+        --surface-color: #27272a;
+        --surface-hover: #3f3f46;
+        --main-text-color: #fafafa;
+        --weak-text-color: #a1a1aa;
+        --main-border-color: #3f3f46;
+        --weak-header-bg-color: #27272a;
+        --weak-data-bg-color: #27272a;
+        --accent-color: #8b5cf6;
+        --accent-hover: #7c3aed;
+        --sticky-yellow-color: #27272a;
+        --sticky-green-color: #27272a;
+        --sticky-blue-color: #27272a;
+        --sticky-red-color: #2d1515;
+        --sticky-shadow-color: rgba(0,0,0,0.4);
+        --sticky-tag-bg-color: #8b5cf6;
+        --sticky-tag-text-color: #fff;
+        --stripe-backlog: #6b7280;
+        --stripe-todo: #3b82f6;
+        --stripe-inprogress: #f59e0b;
+        --stripe-staging: #8b5cf6;
+        --stripe-done: #10b981;
+        --calendar-sunday-color: #fca5a5;
+        --calendar-saturday-color: #93c5fd;
         --calendar-today-color: #fff;
-        --calendar-today-bg-color: #1e84eb;
+        --calendar-today-bg-color: #8b5cf6;
     }
 }
 

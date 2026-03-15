@@ -1,49 +1,63 @@
 # Kanban Board App
 
-![welcome-board](https://raw.githubusercontent.com/shellyln/kanban-board-app/master/public/images/icons/icon-96x96.png)
+![icon](https://raw.githubusercontent.com/shellyln/kanban-board-app/master/public/images/icons/icon-96x96.png)
 
-Kanban style task management board app, now powered by **PostgreSQL** and **Node.js 22**.
+Kanban style task management board app, powered by **PostgreSQL**, **Node.js 22** and a modernized React frontend.
 
-![welcome-board](https://raw.githubusercontent.com/shellyln/kanban-board-app/master/docs/images/welcome-board.png)
+![board-modern](docs/images/board-modern.png)
 
 ## Features
 
-* Manage tasks with multiple boards
-* Manage tasks in team / story lanes
-* **Persistent storage with PostgreSQL** (using Prisma ORM)
-* **Modern Stack**: Node.js 22, Express backend
-* Write kanban in Markdown syntax
-* Add QR Code to kanban
-* Calendar view
-* Dark mode
-* PWA support
+- Manage tasks with multiple boards and team/story lanes
+- Cards with status color stripes and task counter per column
+- Write task descriptions in Markdown syntax
+- Add QR Code to tasks
+- Calendar view
+- Dark mode (auto, follows system preference)
+- PWA support (installable, offline-ready)
+- CI/CD via Jenkins
 
-## Requirements
+## Tech Stack
 
-### Runtime
+### Frontend
+| Technology | Version | Purpose |
+|---|---|---|
+| React | 17 | UI framework |
+| TypeScript | 4 | Type safety |
+| Redux + typescript-fsa | — | State management |
+| Material-UI (MUI) | v4 | UI components |
+| styled-components | 5 | CSS-in-JS |
+| marked + DOMPurify | — | Markdown rendering |
+| React Router | 5 | Client-side routing |
+| Workbox | 6 | PWA / Service Worker |
+| Playwright | — | E2E tests |
 
-* **Node.js**: v22 or later
-* **Docker**: Required for running the PostgreSQL database locally
-* **npm**: v10 or later
+### Backend
+| Technology | Version | Purpose |
+|---|---|---|
+| Node.js | 22 | Runtime |
+| Express | 5 | HTTP server |
+| Prisma ORM | 5 | Database access |
+| PostgreSQL | 16 | Persistent storage |
+| Docker | — | Local dev database |
 
-### Browsers
-
-* Google Chrome, Firefox, Safari (latest versions)
+### Infrastructure
+| Technology | Purpose |
+|---|---|
+| Traefik v3 | Reverse proxy / TLS |
+| Jenkins | CI/CD pipeline |
+| Docker Compose | Container orchestration |
 
 ## Local Development
 
-### 1. Setup the Database
-
-The app uses PostgreSQL. The easiest way to run it is via Docker:
+### 1. Start the database
 
 ```sh
 cd server
 docker-compose up -d
 ```
 
-### 2. Start the Backend Server
-
-The backend is an Express app using Prisma.
+### 2. Start the backend
 
 ```sh
 cd server
@@ -53,41 +67,45 @@ npx prisma migrate dev
 npm start
 ```
 
-The backend runs on `http://localhost:3001`.
+Backend runs on `http://localhost:3001`.
 
-### 3. Start the Frontend
-
-The frontend is a React app.
+### 3. Start the frontend
 
 ```sh
 npm install
 npm start
 ```
 
-The frontend runs on `http://localhost:3000`.
+Frontend runs on `http://localhost:3000`.
 
 ## Architecture
 
-This project has been modernized to a Client-Server architecture:
-- **Frontend**: React + Redux + TypeScript (Migrated to Node 22)
-- **Backend**: Node.js + Express
-- **Database**: PostgreSQL with Prisma ORM
-- **Bridge**: A transparent bridge in `src/lib/db.ts` redirects legacy PouchDB operations to the new PostgreSQL API.
+```
+Browser → React (Redux) → API calls → Express → Prisma → PostgreSQL
+                  ↓
+         src/lib/db.ts (bridge: legacy PouchDB calls → REST API)
+```
+
+- **Frontend**: React + Redux + TypeScript, code-split by route via `React.lazy`
+- **Backend**: Node.js + Express + Prisma ORM
+- **Database**: PostgreSQL 16
+- **Proxy**: Traefik handles HTTPS and routing in production
 
 ## Settings
 
-### App Settings
+Tap `Settings` in the sidebar and edit the YAML config.
 
-Tap or Click `Settings` menu item of drawer and edit YAML text.
+| Key | Description |
+|---|---|
+| `display.autoUpdate` | Enable periodic board refresh |
+| `display.autoUpdateInterval` | Refresh interval in seconds |
 
-| Key                          | Description                                                                                             |
-|------------------------------|---------------------------------------------------------------------------------------------------------|
-| `display.autoUpdate`         | If true, periodic automatic update of the currently displayed board is enabled.                         |
-| `display.autoUpdateInterval` | Periodic automatic update interval in seconds.                                                          |
+## Author
 
-*Note: Sync settings (`remote.*`) are now managed by the PostgreSQL backend.*
+Maintained by **Leonardo Jaques** — [jaquesprojetos.com.br](https://jaquesprojetos.com.br)
+
+Originally based on [kanban-board-app](https://github.com/shellyln/kanban-board-app) by Shellyl_N (ISC).
 
 ## License
 
-[ISC](https://github.com/shellyln/kanban-board-app/blob/master/LICENSE.md)  
-Copyright (c) 2019 Shellyl_N and Authors.
+[ISC](https://github.com/shellyln/kanban-board-app/blob/master/LICENSE.md)

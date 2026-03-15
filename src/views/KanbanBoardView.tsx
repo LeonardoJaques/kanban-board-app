@@ -2,7 +2,9 @@
 // license: ISC
 // https://github.com/shellyln
 
-import React                      from 'react';
+import React,
+       { useMemo,
+         useCallback }            from 'react';
 import { connect }                from 'react-redux';
 import { RouteComponentProps }    from 'react-router-dom';
 import { makeStyles,
@@ -17,9 +19,8 @@ import { Qr }                     from 'red-agate-barcode/modules/barcode/Qr';
 import { LaneDef,
          StatusLaneDef,
          KanbanRecord,
-         KanbanBoardState, 
+         KanbanBoardState,
          KanbanBoardRecord }      from '../types';
-import gensym                     from '../lib/gensym';
 import { parseISODate }           from '../lib/datetime';
 import { isDark }                 from '../lib/theme';
 import { mapDispatchToProps,
@@ -81,43 +82,65 @@ const Sticky_: React.FC<StickyProps> = (props) => {
     const expired = (! props.taskStatus.completed) &&
         (dueDate ? dueDate < today : false);
 
-    function handleOnDragStart(ev: React.DragEvent) {
-        ev.dataTransfer.setData('elId', (ev.target as any).id);
-    }
+    // Memoize markdown parsing — only recompute when description changes
+    const descriptionHtml = useMemo(
+        () => DOMPurify.sanitize(marked(props.record.description)),
+        [props.record.description]
+    );
 
-    function handleEditApply(rec: KanbanRecord) {
+    // Memoize QR code — only recompute when barcode data changes
+    const qrHtml = useMemo(() => {
+        if (!props.board.displayBarcode || !props.record.barcode) return null;
+        return new Qr({
+            fill: true,
+            fillColor: isDark ? '#fff' : '#000',
+            cellSize: 2,
+            unit: 'px',
+            data: props.record.barcode,
+        }).toImgTag();
+    }, [props.record.barcode, props.board.displayBarcode]);
+
+    const handleOnDragStart = useCallback((ev: React.DragEvent) => {
+        ev.dataTransfer.setData('elId', (ev.target as any).id);
+    }, []);
+
+    const handleEditApply = useCallback((rec: KanbanRecord) => {
         props.updateSticky(rec);
         setOpen(false);
-    }
+    }, [props.updateSticky]);
 
-    function handleArchive(id: string) {
+    const handleArchive = useCallback((id: string) => {
         props.archiveSticky(id);
         setOpen(false);
-    }
+    }, [props.archiveSticky]);
 
-    function handleUnarchive(id: string) {
+    const handleUnarchive = useCallback((id: string) => {
         props.unarchiveSticky(id);
         setOpen(false);
-    }
+    }, [props.unarchiveSticky]);
 
-    function handleDelete(id: string) {
+    const handleDelete = useCallback((id: string) => {
         props.deleteSticky(id);
         setOpen(false);
-    }
+    }, [props.deleteSticky]);
 
-    function handleEditCancel() {
+    const handleEditCancel = useCallback(() => {
         setOpen(false);
-    }
+    }, []);
+
+    const handleOpen = useCallback(() => {
+        setOpen(true);
+    }, []);
 
     return (
         <>
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a
-                id={gensym()}
+                id={props.record._id || ''}
                 data-record-id={props.record._id || ''}
                 className="KanbanBoardView-sticky-link"
                 draggable
-                onClick={ev => setOpen(true)}
+                onClick={handleOpen}
                 onDragStart={handleOnDragStart}>
                 <div
                     className={'KanbanBoardView-sticky-note' + (expired ? ' expired' : '')} >
@@ -136,16 +159,10 @@ const Sticky_: React.FC<StickyProps> = (props) => {
                     }
                     <div
                         className="KanbanBoardView-sticky-description"
-                        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(marked(props.record.description))}} />
-                    {props.board.displayBarcode && props.record.barcode ?
+                        dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+                    {qrHtml ?
                         <div className="KanbanBoardView-sticky-barcode"
-                            dangerouslySetInnerHTML={{__html: new Qr({
-                            fill: true,
-                            fillColor: isDark ? '#fff' : '#000',
-                            cellSize: 2,
-                            unit: 'px',
-                            data: props.record.barcode,
-                        }).toImgTag()}} />
+                            dangerouslySetInnerHTML={{__html: qrHtml}} />
                         : <></>
                     }
                     {props.record.flags.includes('Marked') ?
@@ -174,15 +191,15 @@ const Sticky_: React.FC<StickyProps> = (props) => {
         </>
     );
 }
-const Sticky = connect(mapNeverStateToProps, mapDispatchToProps)(Sticky_);
+const Sticky = connect(mapNeverStateToProps, mapDispatchToProps)(React.memo(Sticky_));
 
 
 const Stickys_: React.FC<StickysProps> = (props) => {
-    function handleOnDragOver(ev: React.DragEvent) {
+    const handleOnDragOver = useCallback((ev: React.DragEvent) => {
         ev.preventDefault();
-    }
+    }, []);
 
-    function handleOnDrop(ev: React.DragEvent) {
+    const handleOnDrop = useCallback((ev: React.DragEvent) => {
         try {
             const elId = ev.dataTransfer.getData('elId');
             const el = document.getElementById(elId);
@@ -195,14 +212,17 @@ const Stickys_: React.FC<StickysProps> = (props) => {
             alert(e.message);
         }
         ev.preventDefault();
-    }
+    }, [props.updateStickyLanes, props.taskStatus.value, props.teamOrStory.value]);
 
-    const filtered = props.records.filter(x => !x.flags || !x.flags.includes('Archived'));
+    const filtered = useMemo(
+        () => props.records.filter(x => !x.flags || !x.flags.includes('Archived')),
+        [props.records]
+    );
 
     return (
         <div
             className={
-                'KanbanBoardView-sticky-wrap ' + 
+                'KanbanBoardView-sticky-wrap ' +
                 (props.teamOrStory.className || '') + ' ' +
                 (props.taskStatus.className || '')}
             data-status={props.taskStatus.value}
@@ -212,7 +232,7 @@ const Stickys_: React.FC<StickysProps> = (props) => {
             >
             {filtered.map(record => (
                 <Sticky
-                    key={record._id || gensym()}
+                    key={record._id}
                     teamOrStory={props.teamOrStory}
                     taskStatus={props.taskStatus}
                     teamOrStories={props.teamOrStories}
@@ -228,7 +248,7 @@ const Stickys_: React.FC<StickysProps> = (props) => {
         </div>
     );
 }
-const Stickys = connect(mapNeverStateToProps, mapDispatchToProps)(Stickys_);
+const Stickys = connect(mapNeverStateToProps, mapDispatchToProps)(React.memo(Stickys_));
 
 
 const KanbanBoardView: React.FC<KanbanBoardViewProps> = (props) => {
@@ -262,6 +282,29 @@ const KanbanBoardView: React.FC<KanbanBoardViewProps> = (props) => {
             props.updateBoardName({ boardId: currentState.kanbanBoard.activeBoardId, boardName: value });
         }
     }
+
+    // Memoize board note HTML
+    const boardNoteHtml = useMemo(
+        () => props.activeBoard.boardNote
+            ? DOMPurify.sanitize(marked(props.activeBoard.boardNote))
+            : '',
+        [props.activeBoard.boardNote]
+    );
+
+    // Memoize column counts — only count records in valid swim lanes
+    const columnCounts = useMemo(() => {
+        const validLanes = new Set(props.activeBoard.teamOrStories.map(t => t.value));
+        return Object.fromEntries(
+            props.activeBoard.taskStatuses.map(ts => [
+                ts.value,
+                props.activeBoard.records.filter(
+                    x => x.taskStatus === ts.value &&
+                         (!x.flags || !x.flags.includes('Archived')) &&
+                         validLanes.has(x.teamOrStory)
+                ).length,
+            ])
+        );
+    }, [props.activeBoard.taskStatuses, props.activeBoard.records, props.activeBoard.teamOrStories]);
 
     if (props.match.params.id) {
         if (props.activeBoard._id !== props.match.params.id) {
@@ -311,6 +354,7 @@ const KanbanBoardView: React.FC<KanbanBoardViewProps> = (props) => {
                                     'KanbanBoardView-header-cell-task-statuses ' +
                                     (taskStatus.className || '')}>
                                 {taskStatus.caption || taskStatus.value}
+                                <span className="KanbanBoardView-col-badge">{columnCounts[taskStatus.value]}</span>
                             </th>
                         ))}
                     </tr>
@@ -343,10 +387,10 @@ const KanbanBoardView: React.FC<KanbanBoardViewProps> = (props) => {
                     ))}
                 </tbody>
             </table>
-            {props.activeBoard.boardNote ?
+            {boardNoteHtml ?
                 <div className="KanbanBoardView-board-note-wrap">
                     <div className="KanbanBoardView-board-note"
-                        dangerouslySetInnerHTML={{__html : DOMPurify.sanitize(marked(props.activeBoard.boardNote))}} />
+                        dangerouslySetInnerHTML={{__html: boardNoteHtml}} />
                 </div> :
                 <></>
             }

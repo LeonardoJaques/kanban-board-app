@@ -1,6 +1,6 @@
 /* Copyright (c) 2019 Shellyl_N and Authors
  * license: ISC
- * https://github.com/shellyln
+ * https://github.com/shellyln/
  */
 
 
@@ -14,8 +14,8 @@ table.KanbanBoardView-board {
     width: calc(100% - 30px);
     height: 100%;
     margin: 15px;
-    border: solid 1px var(--main-text-color);
     border-collapse: collapse;
+    border: none;
 }
 table.KanbanBoardView-board thead th {
     position: sticky;
@@ -31,21 +31,50 @@ table.KanbanBoardView-board th:first-child {
     left: 0;
     z-index: 1;
 }
-table.KanbanBoardView-board th {
-    border: solid 1px var(--main-text-color);
-    border-collapse: collapse;
-    padding: 5px;
+table.KanbanBoardView-board thead th {
+    border: none;
+    border-right: 1px solid var(--main-border-color);
+    border-bottom: 2px solid var(--accent-color);
+    padding: 10px 12px;
+    background-color: var(--weak-header-bg-color);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--weak-text-color);
+}
+table.KanbanBoardView-board thead th:last-child {
+    border-right: none;
+}
+table.KanbanBoardView-board tbody th {
+    border: none;
+    border-right: 1px solid var(--main-border-color);
+    border-bottom: 1px solid var(--main-border-color);
+    padding: 8px 10px;
+    background-color: var(--weak-data-bg-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--weak-text-color);
+    text-align: center;
+    vertical-align: middle;
 }
 table.KanbanBoardView-board tr {
     height: 100%;
 }
 table.KanbanBoardView-board td {
-    border: solid 1px var(--main-text-color);
-    border-collapse: collapse;
-    padding: 5px;
+    border: none;
+    border-right: 1px solid var(--main-border-color);
+    border-bottom: 1px solid var(--main-border-color);
+    padding: 8px;
     vertical-align: top;
     height: 100%;
+    background-color: var(--weak-data-bg-color);
 }
+table.KanbanBoardView-board td:last-child {
+    border-right: none;
+}
+
+/* ── Cards ─────────────────────────────────────────────── */
 .KanbanBoardView-sticky-wrap {
     display: flex;
     flex-direction: row;
@@ -54,50 +83,80 @@ table.KanbanBoardView-board td {
     width: 100%;
     height: 100%;
     padding-bottom: 10px;
+    gap: 4px;
 }
 .KanbanBoardView-sticky-note {
     position: relative;
     display: block;
-    background-color: var(--sticky-yellow-color);
-    filter: drop-shadow(5px 5px 2px var(--sticky-shadow-color));
-    width: 150px;
-    min-height: 80px;
+    background-color: var(--surface-color);
+    box-shadow: 0 1px 3px var(--sticky-shadow-color);
+    border: 1px solid var(--main-border-color);
+    border-left: 3px solid var(--accent-color);
+    border-radius: 8px;
+    width: 160px;
+    min-height: 72px;
     height: auto;
-    margin: 5px;
-    padding: 5px;
+    margin: 4px;
+    padding: 10px 10px 18px 10px;
     word-wrap: break-word;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+/* Stripe de cor por status */
+.KanbanBoardView-sticky-wrap.status-backlog .KanbanBoardView-sticky-note {
+    border-left-color: var(--stripe-backlog);
+}
+.KanbanBoardView-sticky-wrap.status-todo .KanbanBoardView-sticky-note {
+    border-left-color: var(--stripe-todo);
+}
+.KanbanBoardView-sticky-wrap.status-inprogress .KanbanBoardView-sticky-note {
+    border-left-color: var(--stripe-inprogress);
+}
+.KanbanBoardView-sticky-wrap.status-staging .KanbanBoardView-sticky-note {
+    border-left-color: var(--stripe-staging);
+}
+.KanbanBoardView-sticky-wrap.status-done .KanbanBoardView-sticky-note {
+    border-left-color: var(--stripe-done);
+    opacity: 0.75;
+}
+
 .KanbanBoardView-sticky-tags {
-    margin: 2px;
-    padding: 0px;
+    margin: 0 0 6px 0;
+    padding: 0;
     font-size: 85%;
     line-height: 1.6em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
 }
 .KanbanBoardView-sticky-tags li {
     display: inline;
     list-style-type: none;
-    margin-right: 5px;
-    padding: 2px;
-    border-radius: 4px;
+    margin: 0;
+    padding: 1px 7px;
+    border-radius: 9999px;
+    font-size: 0.68rem;
+    font-weight: 600;
     color: var(--sticky-tag-text-color);
     background-color: var(--sticky-tag-bg-color);
 }
 .KanbanBoardView-sticky-barcode {
-    margin: 15px 5px;
+    margin: 12px 4px;
 }
 .KanbanBoardView-sticky-link {
     display: block;
 }
 .KanbanBoardView-sticky-link .KanbanBoardView-sticky-note:hover {
-    filter: drop-shadow(7px 7px 2px var(--sticky-shadow-color));
-    transform: rotate(-3deg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--sticky-shadow-color);
+    border-color: var(--accent-color);
 }
 table.KanbanBoardView-board .KanbanBoardView-sticky-note.expired {
-    /* NOTE: this selector should be longer than "per-board customized styles" */
     background-color: var(--sticky-red-color);
+    border-left-color: #ef4444;
 }
 .KanbanBoardView-sticky-note {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
 }
 .KanbanBoardView-sticky-description h1 {
     margin-block-start: 2px;
@@ -132,10 +191,11 @@ table.KanbanBoardView-board .KanbanBoardView-sticky-note.expired {
 .KanbanBoardView-sticky-description p {
     margin-block-start: 2px;
     margin-block-end: 2px;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
 }
 .KanbanBoardView-sticky-description a {
-    color: var(--main-text-color);
+    color: var(--accent-color);
 }
 .KanbanBoardView-sticky-description img {
     max-width: 100%;
@@ -155,23 +215,26 @@ table.KanbanBoardView-board .KanbanBoardView-sticky-note.expired {
 }
 .KanbanBoardView-sticky-note .marked {
     position: absolute;
-    top: 0px;
-    right: 0px;
-    font-size: 95%;
+    top: 4px;
+    right: 6px;
+    font-size: 85%;
 }
 .KanbanBoardView-sticky-note .due-date {
     position: absolute;
-    bottom: 0px;
-    right: 0px;
-    font-size: 70%;
+    bottom: 4px;
+    right: 6px;
+    font-size: 68%;
+    color: var(--weak-text-color);
 }
 .KanbanBoardView-sticky-note.expired .due-date {
-    color: red;
+    color: #ef4444;
     font-weight: bold;
 }
 table.KanbanBoardView-board thead th:nth-of-type(1) {
     width: 1px;
 }
+
+/* ── Board note ─────────────────────────────────────────── */
 .KanbanBoardView-board-note-wrap {
     font-size: 0.85rem;
 }
@@ -215,7 +278,7 @@ table.KanbanBoardView-board thead th:nth-of-type(1) {
     font-size: 0.85rem;
 }
 .KanbanBoardView-board-note a {
-    color: var(--main-text-color);
+    color: var(--accent-color);
 }
 .KanbanBoardView-board-note img {
     max-width: 100%;
@@ -225,4 +288,20 @@ table.KanbanBoardView-board thead th:nth-of-type(1) {
     margin-inline-start: 0em;
     margin-block-start: inherit;
     margin-block-end: inherit;
+}
+
+/* ── Badge contador de cards ─────────────────────────────── */
+.KanbanBoardView-col-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: 9999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    background-color: var(--accent-color);
+    color: #fff;
+    vertical-align: middle;
+    min-width: 18px;
 }

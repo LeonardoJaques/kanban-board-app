@@ -23,10 +23,11 @@ import { getConstructedAppStore,
          history }               from './store';
 import AppDrawer                 from './components/AppDrawer';
 import KanbanBoardView           from './views/KanbanBoardView';
-import CalendarView              from './views/CalendarView';
-import EditorView                from './views/EditorView';
-import SettingsView              from './views/SettingsView';
 import ConfirmDialog             from './components/ConfirmDialog';
+
+const CalendarView  = React.lazy(() => import('./views/CalendarView'));
+const EditorView    = React.lazy(() => import('./views/EditorView'));
+const SettingsView  = React.lazy(() => import('./views/SettingsView'));
 
 
 
@@ -114,11 +115,7 @@ const App: React.FC<AppProps> = (props) => {
     // Update only first time (apply synchronized data to renderer)
     // NOTE: The first board displayed is not up-to-date with the remote database
     useEffect(() => {
-        // run once
-        setTimeout(() => {
-            props.refreshActiveBoard();
-        }, 3000);
-
+        props.refreshActiveBoard();
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, []);
 
@@ -127,13 +124,15 @@ const App: React.FC<AppProps> = (props) => {
             <CssBaseline />
             <ThemeProvider theme={theme}>
                 <AppDrawer />
-                <Switch>
-                    <Route path="/" exact component={KanbanBoardView} />
-                    <Route path="/kanban/:id?" component={KanbanBoardView} />
-                    <Route path="/calendar/:id?" component={CalendarView} />
-                    <Route path="/edit/:id?" component={EditorView} />
-                    <Route path="/config/" component={SettingsView} />
-                </Switch>
+                <React.Suspense fallback={<div />}>
+                    <Switch>
+                        <Route path="/" exact component={KanbanBoardView} />
+                        <Route path="/kanban/:id?" component={KanbanBoardView} />
+                        <Route path="/calendar/:id?" component={CalendarView} />
+                        <Route path="/edit/:id?" component={EditorView} />
+                        <Route path="/config/" component={SettingsView} />
+                    </Switch>
+                </React.Suspense>
                 {props.alertDialog.open ?
                     <ConfirmDialog {...props.alertDialog} /> :
                     <></>

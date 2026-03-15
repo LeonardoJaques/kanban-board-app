@@ -26,9 +26,6 @@ table.KanbanBoardView-board thead th.status-done {
 table.KanbanBoardView-board td.status-done {
     background-color: var(--weak-data-bg-color);
 }
-.team-or-story-team-b .KanbanBoardView-sticky-note {
-    background-color: var(--sticky-blue-color);
-}
 .status-done .KanbanBoardView-sticky-note {
     background-color: var(--sticky-green-color);
 }
@@ -124,17 +121,21 @@ export const initialData = {
             "completed": true
         }],
         "teamOrStories": [{
-            "value": "Team A",
-            "caption": "🐆 Team A",
-            "className": "team-or-story-team-a"
+            "value": "Backend",
+            "caption": "⚙️ Backend",
+            "className": "epic-backend"
         }, {
-            "value": "Team B",
-            "caption": "🦃 Team B",
-            "className": "team-or-story-team-b"
+            "value": "Frontend",
+            "caption": "🖥️ Frontend",
+            "className": "epic-frontend"
         }, {
-            "value": "Team C",
-            "caption": "🐍 Team C",
-            "className": "team-or-story-team-c"
+            "value": "DevOps",
+            "caption": "🚀 DevOps",
+            "className": "epic-devops"
+        }, {
+            "value": "Docs",
+            "caption": "📄 Docs",
+            "className": "epic-docs"
         }],
         "tags": [{
             "value": "bug",
@@ -191,159 +192,156 @@ export const initialData = {
     "records": [{
         "type": "kanban",
         "dueDate": "",
-        "description":
-            "# Welcome to the Kanban Board App!\n" +
-            "* This is a kanban (or sticky).\n" +
-            "* Write one task for one kanban.\n" +
-            "* To add a kanban to the board, Tap or click the “+” icon in the upper left corner of the board.\n" +
-            "* Tap or click on kanban to edit.\n" +
-            "* Drag and drop the kanban to change the status.",
+        "description": "# Configurar banco de dados\n* Criar schema com Prisma\n* Definir migrations iniciais",
         "barcode": "",
         "memo": "",
         "flags": [],
-        "tags": [],
+        "tags": ["high"],
         "boardId": "",
-        "teamOrStory": "Team B",
-        "taskStatus": "Backlog"
-    }, {
-        "type": "kanban",
-        "dueDate": "",
-        "description":
-            "* Board and Kanban data are stored in the browser's local “indexed DB”.\n" +
-            "* You can use a remote [“CouchDB”](https://couchdb.apache.org) server to synchronize multiple device boards.\n" +
-            "* You can get a fully managed CouchDB server with [“IBM Cloudant®” from IBM Cloud](https://www.ibm.com/cloud/cloudant).\n" +
-            "* Create an [IBM Cloud Lite account](https://www.ibm.com/cloud/free/) and get a free tier without a credit card.",
-        "barcode": "",
-        "memo": "",
-        "flags": [],
-        "tags": [],
-        "boardId": "",
-        "teamOrStory": "Team B",
-        "taskStatus": "ToDo"
-    }, {
-        "type": "kanban",
-        "dueDate": "",
-        "description":
-            "# Go [Settings](#/config/) to setup\n\n" +
-            "----\n\n" +
-            "* `remote.endpointUrl`: Cloudant `External Endpoint` URL w/ DB name\n" +
-            "  * e.g. `https://???-bluemix.cloudant.com/mydb`\n" +
-            "* `remote.user`: Cloudant `API Key`\n" +
-            "* `remote.password`: Cloudant `API Key`'s password",
-        "barcode": "",
-        "memo": "",
-        "flags": [],
-        "tags": [],
-        "boardId": "",
-        "teamOrStory": "Team B",
-        "taskStatus": "ToDo"
-    }, {
-        "type": "kanban",
-        "dueDate": "",
-        "description":
-            "* You can customize the appearance and behavior of the board and kanban in the configuration editor view.\n\n\n" +
-            "----\n\n" +
-            "# Go [Editor](#/edit/) to setup",
-        "barcode": "",
-        "memo": "",
-        "flags": [],
-        "tags": [],
-        "boardId": "",
-        "teamOrStory": "Team B",
-        "taskStatus": "InProgress"
-    }, {
-        "type": "kanban",
-        "dueDate": "2030-01-01",
-        "description":
-            "### Hello, kanban board !\n\n" +
-            "* ~aaa~\n" +
-            "  * **bbb**\n" +
-            "* *ccc*\n\n" +
-            "----\n\n" +
-            "https://shellyln.github.io/\n\n" +
-            "![logo](https://shellyln.github.io/assets/image/shellyln.png)",
-        "barcode": "12345",
-        "memo": "memo",
-        "flags": ["Marked"],
-        "tags": ["PR", "bug", "ok", "NG", "rejected", "pending", "merged", "critical", "high", "moderate", "low", "⭐⭐⭐"],
-        "boardId": "",
-        "teamOrStory": "Team B",
-        "taskStatus": "Staging"
-    }, {
-        "type": "kanban",
-        "dueDate": "",
-        "description":
-            "# What is a Kanban Board?\n" +
-            "https://www.atlassian.com/agile/kanban/boards",
-        "barcode": "",
-        "memo": "",
-        "flags": [],
-        "tags": [],
-        "boardId": "",
-        "teamOrStory": "Team C",
-        "taskStatus": "Backlog"
-    }, {
-        "type": "kanban",
-        "dueDate": "",
-        "description":
-            "# What are WIP limits?\n" +
-            "https://www.atlassian.com/agile/kanban/wip-limits",
-        "barcode": "",
-        "memo": "",
-        "flags": [],
-        "tags": [],
-        "boardId": "",
-        "teamOrStory": "Team C",
-        "taskStatus": "Backlog"
-    }, {
-        "type": "kanban",
-        "dueDate": "",
-        "description":
-            "# Get Started With Cloudant in IBM Cloud\n" +
-            "https://developer.ibm.com/clouddataservices/docs/cloudant/get-started/",
-        "barcode": "",
-        "memo": "",
-        "flags": [],
-        "tags": [],
-        "boardId": "",
-        "teamOrStory": "Team C",
-        "taskStatus": "ToDo"
-    }, {
-        "type": "kanban",
-        "dueDate": "",
-        "description":
-            "# Sign up for IBM Cloud\n" +
-            "https://cloud.ibm.com/registration",
-        "barcode": "",
-        "memo": "",
-        "flags": [],
-        "tags": [],
-        "boardId": "",
-        "teamOrStory": "Team C",
-        "taskStatus": "ToDo"
-    }, {
-        "type": "kanban",
-        "dueDate": "",
-        "description":
-            "Release Kanban board app v0.0.1\n\n" +
-            "![image](https://shellyln.github.io/knbn/images/icons/icon-32x32.png)",
-        "barcode": "",
-        "memo": "",
-        "flags": [],
-        "tags": ["ok", "merged", "v0.0.1", "feature-something", "#1", "#2"],
-        "boardId": "",
-        "teamOrStory": "Team A",
+        "teamOrStory": "Backend",
         "taskStatus": "Done"
     }, {
         "type": "kanban",
-        "dueDate": "2030-01-01",
-        "description": "This record is archived.",
+        "dueDate": "",
+        "description": "# Implementar API REST\n* Endpoints CRUD\n* Autenticação com sessão",
         "barcode": "",
         "memo": "",
-        "flags": ["Archived"],
-        "tags": [],
+        "flags": [],
+        "tags": ["high"],
         "boardId": "",
-        "teamOrStory": "Team B",
+        "teamOrStory": "Backend",
+        "taskStatus": "Done"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Rate limiting\nAdicionar limitação de requisições por IP no Express",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["moderate"],
+        "boardId": "",
+        "teamOrStory": "Backend",
+        "taskStatus": "InProgress"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Testes de integração\nCobertura dos endpoints principais com Jest",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["low"],
+        "boardId": "",
+        "teamOrStory": "Backend",
+        "taskStatus": "Backlog"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Modernizar visual\n* Nova paleta de cores (zinc + violet)\n* Cards com border-radius e stripe de status",
+        "barcode": "",
+        "memo": "",
+        "flags": ["Marked"],
+        "tags": ["ok"],
+        "boardId": "",
+        "teamOrStory": "Frontend",
+        "taskStatus": "Done"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Otimizações de performance\n* `React.memo` nos cards\n* `useMemo` no markdown parser\n* Code splitting por rota",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["ok"],
+        "boardId": "",
+        "teamOrStory": "Frontend",
+        "taskStatus": "Done"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Swim lanes por épico\nSubstituir Team A/B/C por Backend, Frontend, DevOps, Docs",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["ok"],
+        "boardId": "",
+        "teamOrStory": "Frontend",
+        "taskStatus": "InProgress"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Contador de cards por coluna\nBadge numérico no header de cada status",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["ok"],
+        "boardId": "",
+        "teamOrStory": "Frontend",
+        "taskStatus": "Done"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Docker Compose\nStack completa: Traefik + app + PostgreSQL",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["ok"],
+        "boardId": "",
+        "teamOrStory": "DevOps",
+        "taskStatus": "Done"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Pipeline Jenkins\nBuild, testes e deploy automático no VPS",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["ok"],
+        "boardId": "",
+        "teamOrStory": "DevOps",
+        "taskStatus": "Done"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Backup automático\nScript diário com retenção de 7 dias",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["moderate"],
+        "boardId": "",
+        "teamOrStory": "DevOps",
+        "taskStatus": "InProgress"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Upgrade Ubuntu 20.04 → 22.04\nEOL desde abril/2025",
+        "barcode": "",
+        "memo": "",
+        "flags": ["Marked"],
+        "tags": ["critical"],
+        "boardId": "",
+        "teamOrStory": "DevOps",
+        "taskStatus": "Backlog"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Atualizar README\n* Screenshot do novo layout\n* Tabela de tecnologias",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["ok"],
+        "boardId": "",
+        "teamOrStory": "Docs",
+        "taskStatus": "Done"
+    }, {
+        "type": "kanban",
+        "dueDate": "",
+        "description": "# Documentar API REST\nEndpoints, parâmetros e exemplos de resposta",
+        "barcode": "",
+        "memo": "",
+        "flags": [],
+        "tags": ["low"],
+        "boardId": "",
+        "teamOrStory": "Docs",
         "taskStatus": "Backlog"
     }]
 }
